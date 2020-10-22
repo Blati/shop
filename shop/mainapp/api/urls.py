@@ -11,7 +11,7 @@ from .api_views import (
 
 urlpatterns = [
     path('categories/', CategoryAPIView.as_view(), name='categories_list'),
-    path('categories/<str:pk>/', CategoryAPIView.as_view(), name='categories_list'),
+    path('categories/<str:pk>/', CategoryAPIView.as_view(), name='category_upd'),
     path('customers/', CustomersListAPIView.as_view(), name='customers_list'),
     path('smartphones/', SmartphoneListAPIView.as_view(), name='smartphones_list'),
     path('notebooks/', NotebookListAPIView.as_view(), name='notebooks_list'),
