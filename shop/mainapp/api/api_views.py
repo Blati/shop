@@ -5,7 +5,7 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView, ListCreateAPIV
 from rest_framework.filters import SearchFilter
 from rest_framework.pagination import PageNumberPagination
 
-from .permissions import IsAdminOrReadOnly
+from .permissions import IsStaffOrReadOnly
 from .serializers import CategorySerializer, SmartphoneSerializer, NotebookSerializer, CustomerSerializer
 from ..models import Category, Smartphone, Notebook, Customer
 
@@ -30,7 +30,7 @@ class CategoryAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
     serializer_class = CategorySerializer
     pagination_class = CategoryPagination
     queryset = Category.objects.get_queryset().order_by('id')
-    permission_classes = [IsAdminOrReadOnly]
+    permission_classes = [IsStaffOrReadOnly]
 
 
 class SmartphoneListAPIView(ListAPIView):

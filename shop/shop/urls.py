@@ -1,3 +1,5 @@
+import debug_toolbar
+
 from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, include
@@ -9,6 +11,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('mainapp.api.urls')),
     path('', include('mainapp.urls')),
+    path('__debug__/', include(debug_toolbar.urls)),
     url('', include('social_django.urls', namespace='social'))
 ]
 
