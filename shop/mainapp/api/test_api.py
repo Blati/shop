@@ -14,6 +14,7 @@ class ShopApiTestCase(APITestCase):
 
     def setUp(self):
         self.user = User.objects.create(username='test_username')
+        self.staff = User.objects.create_superuser(username='staff_test_username', is_staff=True)
         self.category1 = Category.objects.create(name='KEKW', slug='kekw')
         self.category2 = Category.objects.create(name='KEKWait', slug='kekwait')
         self.smartphone1 = Smartphone.objects.create(
@@ -41,7 +42,7 @@ class ShopApiTestCase(APITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(serializer_data, response.data[next(reversed(response.data))])
 
-    def test_category_create_not_admin(self):
+    def test_category_create_not_staff(self):
         self.assertEqual(2, Category.objects.all().count())
         url = reverse('categories_list')
         data = {
@@ -57,7 +58,23 @@ class ShopApiTestCase(APITestCase):
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
         self.assertEqual(2, Category.objects.all().count())
 
-    def test_category_update_not_admin(self):
+    def test_category_create(self):
+        self.assertEqual(2, Category.objects.all().count())
+        url = reverse('categories_list')
+        data = {
+            "name": "Чайники",
+            "slug": "teapots"
+        }
+        json_data = json.dumps(data)
+        self.client.force_login(self.staff)
+        response = self.client.post(
+            url, data=json_data,
+            content_type='application/json'
+        )
+        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+        self.assertEqual(3, Category.objects.all().count())
+
+    def test_category_update_not_staff(self):
         url = reverse('category_upd', args=(self.category1.id,))
         data = {
             "name": 'Pepega',
@@ -72,6 +89,22 @@ class ShopApiTestCase(APITestCase):
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
         self.category1.refresh_from_db()
         self.assertEqual('KEKW', self.category1.name)
+
+    def test_category_update(self):
+        url = reverse('category_upd', args=(self.category1.id,))
+        data = {
+            "name": 'Pepega',
+            "slug": self.category1.slug
+        }
+        json_data = json.dumps(data)
+        self.client.force_login(self.staff)
+        response = self.client.put(
+            url, data=json_data,
+            content_type='application/json'
+        )
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.category1.refresh_from_db()
+        self.assertEqual('Pepega', self.category1.name)
 
     def test_smartphones_search(self):
         url = reverse('smartphones_list')
