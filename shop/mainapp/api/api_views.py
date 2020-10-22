@@ -1,5 +1,6 @@
 from _collections import OrderedDict
 
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView, RetrieveAPIView, ListCreateAPIView, RetrieveUpdateAPIView
 from rest_framework.filters import SearchFilter
@@ -28,6 +29,7 @@ class CategoryAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
     serializer_class = CategorySerializer
     pagination_class = CategoryPagination
     queryset = Category.objects.get_queryset().order_by('id')
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 class SmartphoneListAPIView(ListAPIView):
