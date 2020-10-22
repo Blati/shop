@@ -8,13 +8,13 @@ from mainapp.models import Category
 
 
 class ShopApiTestCase(APITestCase):
+    def setUp(self):
+        self.category1 = Category.objects.create(name='KEKW', slug='kekw')
+        self.category2 = Category.objects.create(name='KEKWait', slug='kekwait')
 
     def test_categories(self):
-        category1 = Category.objects.create(name='KEKW', slug='kekw')
-        category2 = Category.objects.create(name='KEKWait', slug='kekwait')
         url = reverse('categories_list')
         response = self.client.get(url)
-        serializer_data = CategorySerializer([category1, category2], many=True).data
+        serializer_data = CategorySerializer([self.category1, self.category2], many=True).data
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(serializer_data, response.data[next(reversed(response.data))])
-
